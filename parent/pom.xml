@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cn.czcxy.xj</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.10.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <spring-cloud.version>Dalston.SR1</spring-cloud.version>
+        <de.codecentric.version>1.5.2</de.codecentric.version>
+    </properties>
+
+    <modules>
+        <module>../server</module>
+        <module>../config</module>
+        <module>../zipkin</module>
+        <module>../zuul</module>
+        <module>../common</module>
+        <module>../core</module>
+        <module>../admin</module>
+        <module>../dispatch-client</module>
+        <module>../basic-client</module>
+        <module>../basic-server</module>
+        <module>../crm-client</module>
+        <module>../crm-server</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <!-- 通用maven库-->
+    <profiles>
+        <profile>
+            <id>JdConnection</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <db.name>base</db.name>
+                <connection.driver>com.mysql.jdbc.Driver</connection.driver>
+                <connection.url>
+                    jdbc:mysql://116.196.123.227:3306/base?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8
+                </connection.url>
+                <connection.username>root</connection.username>
+                <connection.password></connection.password>
+                <connection.type>com.alibaba.druid.pool.DruidDataSource</connection.type>
+                <!-- 服务注册地址 -->
+                <eureka.server.name>eureka-server</eureka.server.name>
+                <eureka.server.hostname>localhost</eureka.server.hostname>
+                <eureka.server.port>8080</eureka.server.port>
+                <!-- 配置中心地址-->
+                <config.port>8086</config.port>
+                <config.name>eureka-config</config.name>
+                <config.hostname>localhost</config.hostname>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <uniqueVersion>false</uniqueVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <!-- 打包java目录中mapper的xml文件-->
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <!-- 打包资源xml文件-->
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+</project>

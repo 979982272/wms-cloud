@@ -1,0 +1,10 @@
+spring:
+  zipkin:
+    base-url: http://47.93.187.183:9097
+  sleuth:
+    sampler:
+      percentage: 1.0
+management:
+  security:
+    enable: false
+

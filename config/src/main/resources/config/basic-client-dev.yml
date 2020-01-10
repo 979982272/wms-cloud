@@ -1,0 +1,12 @@
+server:
+  port: 8081
+logging:
+  file: "logs/basic-client.log"
+  level:
+    org:
+      springframework:
+        web:
+          DEBUG
+spring.profiles.include: zipkinAddress,serverAddress,datasource,redis
+
+

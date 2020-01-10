@@ -1,0 +1,19 @@
+server:
+  port: 9096
+spring:
+  application:
+    name: eureka-config
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config/
+  profiles:
+    active: native
+logging:
+  file: "logs/config.log"
+  level:
+    org:
+      springframework:
+        web:
+          DEBUG

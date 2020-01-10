@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: crm-client
+  cloud:
+    config:
+      uri: http://47.93.187.183:9096
+      #uri: http://127.0.0.1:9096
+      fail-fast: true
+  profiles:
+    active: dev
+

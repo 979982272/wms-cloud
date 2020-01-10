@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: eureka-zuul
+  cloud:
+    config:
+      uri: http://47.93.187.183:9096
+      fail-fast: true
+  profiles:
+    active: dev

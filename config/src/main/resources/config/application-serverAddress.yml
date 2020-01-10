@@ -1,0 +1,12 @@
+eureka:
+  client:
+    service-url:
+      defaultZone:
+        ##http://localhost:8080/eureka/
+        http://47.93.187.183:9090/eureka/
+##spring.jackson.date-format: yyyy-MM-dd HH:mm:ss
+spring.jackson.date-format: yyyy-MM-dd
+spring.jackson.time-zone: GMT+8
+## 这里指定了所有实例的ip
+eureka.instance.prefer-ip-address: true
+#eureka.instance.ip-address: 47.93.187.183

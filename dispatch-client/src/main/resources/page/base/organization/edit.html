@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+<#include "/common/head.html"/>
+</head>
+<body style="overflow: hidden">
+<!-- SPA container define -->
+<div id="application"></div>
+<!-- loyout template define -->
+<script id="layout-template" type="text/x-kendo-template">
+    <div id="content"></div>
+</script>
+<!-- edit view template define -->
+<script id="editForm-template" type="text/x-kendo-template">
+    <div data-role="toolbar">
+        <div style="padding-left: 15px">
+            <button name="saveEditInfo" class="k-button" type="button" data-role="button"
+                    role="button" id="saveEditInfo"
+                    data-bind="events: {click: saveEditInfo}"><span
+                    class="fa fa-save"></span>保存
+            </button>
+            <button name="back" class="k-button" type="button" data-role="button"
+                    role="button"
+                    data-bind="events: {click: back}"><span
+                    class="fa fa-mail-reply"></span>返回
+            </button>
+        </div>
+    </div>
+    <div id="editForm-pane" style="overflow: auto;" data-bind="style: {height: contentHeight}">
+        <form id="editForm" style="padding: 15px;">
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                        <label for="organizationCode"
+                               class="top-label required">组织机构编码：</label>
+                            <input id="organizationCode" class="k-textbox validate[required]"
+                                   data-bind="value:editModelData.organizationCode"
+                                   
+                                    >
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                        <label for="organizationName"
+                               class="top-label required">机构名称：</label>
+                            <input id="organizationName" class="k-textbox validate[required]"
+                                   data-bind="value:editModelData.organizationName"
+                                   
+                                    >
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                        <label for="linkMan"
+                               class="top-label required">联系人：</label>
+                            <input id="linkMan" class="k-textbox validate[required]"
+                                   data-bind="value:editModelData.linkMan"
+                                   
+                                    >
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                        <label for="linkPhone"
+                               class="top-label required">联系电话：</label>
+                            <input id="linkPhone" class="validate[required]"
+                                   data-bind="value:editModelData.linkPhone"
+                                   data-role="numerictextbox" >
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                        <label for="address"
+                               class="top-label ">地址：</label>
+                            <input id="address" class="k-textbox "
+                                   data-bind="value:editModelData.address"
+                                   
+                                    >
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                        <label for="remaker"
+                               class="top-label ">备注：</label>
+                            <input id="remaker" class="k-textbox "
+                                   data-bind="value:editModelData.remaker"
+                                   
+                                    >
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+</body>
+<script>
+    // 数据模型
+    var editFormModel = kendo.observable({
+        editModelData: {},
+        op: "create",
+        contentHeight: document.documentElement.clientHeight - 37 + "px",
+        reset: function () {
+            var that = this;
+            that.set("editModelData", {});
+        },
+        saveEditInfo: function () {
+            var that = this;
+            if ($("#editForm").validationEngine("validate")) {
+                var req = {};
+                var info;
+                info = jQuery.extend(true, {}, that.get("editModelData"));
+                $.extend(req, info);
+                $.core.ajax({
+                    url: "/base/organization/" + that.op,
+                    type: "post",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data: JSON.stringify(req),
+                    success: function (res) {
+                        if (res.status) {
+                            that.set("op", "update");
+                            that.set("editModelData",res.other.entity)
+                            $.core.showMsg(res.msg)
+                        } else {
+                            $.core.showErrogMsg(res.msg);
+                        }
+                    }
+                })
+            }
+        },
+        back: function () {
+            history.back(-1);
+        }
+    });
+    // 初始化
+    function initEditForm() {
+        var id = '${id}';
+        if (isNotEmpty(id)) {
+            readOnlyById("id")
+            editFormModel.op = "update";
+            getDataInfoById("/base/organization/" + id + "/getDataInfoById", function (res) {
+                if (res.status) {
+                    editFormModel.set("editModelData", res.other.modelData);
+                } else {
+                    $.core.showErrogMsg(res.msg);
+                }
+            });
+        } else {
+            editFormModel.op = "create";
+        }
+    }
+    //基本信息页面
+    var editFormView = new kendo.View("editForm-template", {
+        model: editFormModel, init: initEditForm
+    });
+    // Routing
+    var router = new kendo.Router();
+    // Layout
+    var layout = new kendo.Layout("layout-template");
+    // 渲染
+    layout.render("#application");
+    // 基本信息
+    router.route("/", function () {
+        layout.showIn("#content", editFormView);
+    });
+    $(function () {
+        //开户路由
+        router.start();
+    });
+</script>

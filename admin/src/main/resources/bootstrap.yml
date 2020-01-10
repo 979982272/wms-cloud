@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: eureka-admin
+  cloud:
+    config:
+      uri: http://47.93.187.183:9096
+      fail-fast: true
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
+  profiles:
+    active: dev

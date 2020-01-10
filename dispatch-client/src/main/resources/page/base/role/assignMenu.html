@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <#include "/common/head.html"/>
+</head>
+<body style="overflow: hidden">
+
+<!-- SPA container define -->
+<div id="application"></div>
+<!-- loyout template define -->
+<script id="layout-template" type="text/x-kendo-template">
+    <div id="content"></div>
+</script>
+<!-- edit view template define -->
+<script id="editForm-template" type="text/x-kendo-template">
+    <div data-role="toolbar">
+        <div style="padding-left: 15px">
+            <button name="saveEditInfo" class="k-button" type="button" data-role="button"
+                    role="button" id="saveEditInfo"
+                    data-bind="events: {click: saveEditInfo}"><span
+                    class="fa fa-save"></span>保存
+            </button>
+            <button name="back" class="k-button" type="button" data-role="button"
+                    role="button"
+                    data-bind="events: {click: back}"><span
+                    class="fa fa-mail-reply"></span>关闭
+            </button>
+        </div>
+    </div>
+    <div id="editForm-pane" style="overflow: auto;" data-bind="style: {height: contentHeight}">
+        <div id="treeview"></div>
+    </div>
+</script>
+</body>
+<script>
+    // 数据模型
+    var editFormModel = kendo.observable({
+        editModelData: {},
+        op: "create",
+        contentHeight: document.documentElement.clientHeight - 37 + "px",
+        reset: function () {
+            var that = this;
+            that.set("editModelData", {});
+        },
+        saveEditInfo: function () {
+            var treeview = $("#treeview").data("kendoTreeView");
+            var ids = [];
+            var items = $("#treeview .k-item input[type=checkbox]:checked").closest(".k-item");
+            var parent;
+            var dataItemParent;
+            $(items).each(function () {
+                ids.push(treeview.dataItem(this).id);
+                parent = treeview.parent(treeview.findByText(treeview.dataItem(this).text));
+                dataItemParent = treeview.dataItem(parent);
+                while (dataItemParent != undefined) {
+                    ids.push(dataItemParent.id);
+                    parent = treeview.parent(parent);
+                    dataItemParent = treeview.dataItem(parent);
+                }
+            })
+            // if (ids.length <= 0) {
+            //     $.core.showErrogMsg("请勾选菜单!");
+            //     return;
+            // }
+            ids = ids.join(",");
+            actionInfo({
+                url: "/base/role/${id}/assignMenu",
+                gridName: "treeview",
+                ids: ids,
+                treeView: true
+            })
+        },
+        back: function () {
+            history.back(-1);
+        }
+    });
+
+    // 初始化
+    function initEditForm() {
+
+        $("#treeview").kendoTreeView({
+            checkboxes: {
+                checkChildren: true,
+                template:
+                "# if (item.level() > 0) { #" +
+                "<input id='#= item.id #' name='#= item.id #' type='checkbox' #= item.checked ? 'checked' : '' #>" +
+                "# } #"
+            }, check: function (e) {
+                var treeview = $("#treeview").data("kendoTreeView");
+                var dataItem = treeview.dataItem(e.node);
+                if (dataItem.checked == true) {
+                    treeview.expand(e.node);
+                    dataItem.set("checked", true);
+                } else {
+                    treeview.collapse(e.node)
+                    dataItem.set("checked", false);
+                }
+            }
+        });
+        var treeview = $("#treeview").data("kendoTreeView");
+        $.core.ajax({
+            url: "/base/role/${id}/getMenus",
+            type: "post",
+            dataType: "json",
+            success: function (res) {
+                treeview.setDataSource(new kendo.data.HierarchicalDataSource({
+                    data: res
+                }));
+            }
+        });
+    }
+
+    //基本信息页面
+    var editFormView = new kendo.View("editForm-template", {
+        model: editFormModel, init: initEditForm
+    });
+    // Routing
+    var router = new kendo.Router();
+    // Layout
+    var layout = new kendo.Layout("layout-template");
+    // 渲染
+    layout.render("#application");
+    // 基本信息
+    router.route("/", function () {
+        layout.showIn("#content", editFormView);
+    });
+    $(function () {
+        //开户路由
+        router.start();
+    });
+</script>

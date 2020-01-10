@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: dispatch-client
+  cloud:
+    config:
+      uri: http://47.93.187.183:9096
+      fail-fast: true
+  profiles:
+    active: dev
+development:
+  ##mybatis逆向工程配置文件路径
+  generatorConfigPath: E:\\workSpace\\work\\wms-cloud\\dispatch-client\\src\\main\\resources\\generatorConfig.xml
+  ##java生成路径
+  javaPath: C:\\java
+  ##html生成路径
+  htmPath: C:\\page
+  ##项目web-info路径
+  webInfoPath: E:\\workSpace\\work\\base\\src\\main\\webapp\\WEB-INF
+  ##mybatis逆向工程模板文件名称
+  generatorConfigFtl: ftl/generatorConfig.ftl
+  ##控制器生成模板
+  controllerFtl: ftl/controller.ftl
+  ##服务接口生成模板
+  serviceFtl: ftl/service.ftl
+  ##服务接口实现生成模板
+  serviceImplFtl: ftl/serviceImpl.ftl
+  ##表格首页生成模板
+  gridHtmlFtl: ftl/gridHtml.ftl
+  ##表格编辑页面生成模板
+  editHtmlFtl: ftl/editHtml.ftl
+  ## 表格页面生成模板
+  gridVueFtl: ftl/gridVue.ftl
+  ## 表单页面生成模板
+  editVuelFtl: ftl/editVue.ftl
+
+
+

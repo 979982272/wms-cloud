@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>${title}</title>
+    <#include "/common/head.html"/>
+</head>
+<body id="parentBody">
+<div style="height: 100%">
+    <div style="height: 37px">
+        <ul id="menu" style="float: right"></ul>
+    </div>
+
+    <div style="height: 90%;overflow: hidden" id="horizontal">
+        <div id="panelbar" style="overflow: hidden;height: 100%;width: 10%;float: left">
+        </div>
+        <div style="overflow: hidden;height: 100%;">
+            <div id="tabstrip"></div>
+        </div>
+    </div>
+    <div style="height: 5%" id="footer">
+        <div style="margin-bottom: 10px;text-align: center">
+            <span style="color: #000000;font-size: 14px;">版权所有 © &nbsp;王伟华(演示平台)</span>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var tabStrip = $("#tabstrip").kendoTabStrip({
+        animation: false
+    }).data("kendoTabStrip");
+    kendo.removeTab = 0;
+
+    function calcTabHeight() {
+        var tabHeight = $("#tabstrip").parent().parent().height();
+        var ulHeight = $("#tabstrip").find("ul").height();
+        var height = tabHeight - ulHeight;
+        $("#tabstrip").find("div[role='tabpanel']").css({
+            height: height,
+            padding: "0px",
+            margin: "0px",
+            border: "0px"
+        });
+        $("#tabstrip").find("ul").css({
+            padding: "0px",
+            border: "0px"
+        })
+    }
+
+    $(function () {
+        $("#horizontal").kendoSplitter({
+            panes: [
+                {collapsible: true, resizable: true, scrollable: true, size: "10%"},
+                {collapsible: false, resizable: true, scrollable: true}
+            ]
+        });
+        // 菜单
+        $("#panelbar").kendoPanelBar({
+            animation: {
+                close: {
+                    duration: 0,
+                    effects: "fadeOut"
+                },
+                open: {
+                    duration: 0,
+                    effects: "fadeIn"
+                }
+            }
+        });
+        var panelBar = $("#panelbar").data("kendoPanelBar");
+        $.ajax({
+            url: "/base/menu/getMenusByEmpOrOrganization?token=${token}",
+            type: "post",
+            dataType: "json",
+            success: function (res) {
+                panelBar.append(res);
+            }
+        });
+        // 左上角菜单头像
+        var imgUrl = "https://demos.telerik.com/kendo-ui/content/shared/icons/sports/swimming.png";
+        $("#menu").kendoMenu({
+            dataSource:
+                [
+                    {
+                        text: "${userName}",
+                        imageAttr: {
+                            alt: 'Image',
+                            height: '25px',
+                            width: '25px'
+                        },
+                        imageUrl: imgUrl,
+                        items: [{
+                            text: "修改密码"
+                        },
+                            {
+                                text: "安全退出",
+                                url: "/loginOut"
+                            }
+                        ]
+                    }
+                ]
+        });
+        // 将token设置到闭包对象中
+        $.core.data("token", "${token}");
+    });
+
+    function addTab(title, url) {
+        // 添加tab
+        tabStrip.append([
+            {
+                text: "<b>" + title + "</b> &nbsp;<span  class='removeTab" + kendo.removeTab + " glyphicon glyphicon-remove' role='button' ></span>",
+                encoded: false,
+                content: "<iframe src='" + url + "' frameborder='0' width='100%' height='100%'></iframe>"
+            }
+        ]);
+        calcTabHeight()
+        tabStrip.select("li:last");
+        $(".removeTab" + kendo.removeTab).bind("click", removeTab);
+        kendo.removeTab = kendo.removeTab + 1;
+    }
+
+    // 移除tab
+    function removeTab() {
+        var index = $($(this)[0]).parent().parent().index();
+        tabStrip.remove(index)
+        kendo.removeTab = kendo.removeTab - 1;
+        if (index == kendo.removeTab) {
+            tabStrip.select("li:last");
+        }
+    }
+
+</script>
+</html>

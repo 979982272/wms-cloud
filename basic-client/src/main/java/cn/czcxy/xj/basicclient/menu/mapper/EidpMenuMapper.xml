@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.czcxy.xj.basicclient.menu.mapper.EidpMenuMapper">
+    <resultMap id="BaseResultMap" type="cn.czcxy.xj.basicclient.menu.entity.EidpMenu">
+        <!--
+          WARNING - @mbggenerated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="parent_id" property="parentId" jdbcType="INTEGER"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="text" property="text" jdbcType="VARCHAR"/>
+        <result column="icon" property="icon" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="server_flag" property="serverFlag" jdbcType="INTEGER"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <association property="parentMenu" column="parent_id"
+                     select="findMenuById" fetchType="lazy"
+                     javaType="cn.czcxy.xj.basicclient.menu.entity.EidpMenu"></association>
+        <collection property="childMenus" javaType="ArrayList" column="id"
+                    ofType="cn.czcxy.xj.basicclient.menu.entity.EidpMenu"
+                    select="findMenusByParentId" fetchType="lazy">
+
+        </collection>
+    </resultMap>
+    <select id="findMenusByParentId" resultMap="BaseResultMap" parameterType="int">
+        select * from eidp_menu where parent_id =#{id}
+    </select>
+    <select id="findAllMenusByLevel" resultMap="BaseResultMap">
+        select * from eidp_menu WHERE level = #{level} ;
+    </select>
+    <select id="findMenuById" resultMap="BaseResultMap">
+        select * from eidp_menu WHERE id = #{id} ;
+    </select>
+    <select id="findMenuByEmpIdAndOrganizationId" resultMap="BaseResultMap">
+        select em.* FROM eidp_organization eo
+        inner join eidp_organization_role ro on eo.id=ro.organization_id
+        inner join eidp_role er on ro.role_id=er.id
+        inner join eidp_role_menu rm on er.id=rm.role_id
+        INNER JOIN eidp_menu em on rm.menu_id=em.id
+        inner join eidp_organization_emp oe on eo.id=oe.organization_id
+        inner join eidp_emp e on e.id=oe.emp_id
+        where 1=1
+        <if test="empId !=null and empId != ''">
+            and e.id=#{empId}
+        </if>
+        <if test="organizationId !=null and organizationId != ''">
+            and eo.id=#{organizationId}
+        </if>
+        ORDER BY em.level
+    </select>
+
+    <select id="findEidpMenu" resultMap="BaseResultMap">
+        SELECT * from eidp_menu m order by m.level
+    </select>
+</mapper>

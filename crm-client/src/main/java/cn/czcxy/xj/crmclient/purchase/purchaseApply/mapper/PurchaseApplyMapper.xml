@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.czcxy.xj.crmclient.purchase.purchaseApply.mapper.PurchaseApplyMapper">
+    <resultMap id="BaseResultMap" type="cn.czcxy.xj.crmclient.purchase.purchaseApply.entity.PurchaseApply">
+        <!--
+          WARNING - @mbggenerated
+        -->
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="vendor_id" jdbcType="VARCHAR" property="vendorId"/>
+        <result column="vendor_name" jdbcType="VARCHAR" property="vendorName"/>
+        <result column="warehouse_id" jdbcType="VARCHAR" property="warehouseId"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="apply_date" jdbcType="TIMESTAMP" property="applyDate"/>
+        <result column="arrival_date" jdbcType="TIMESTAMP" property="arrivalDate"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="server_flag" jdbcType="INTEGER" property="serverFlag"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_emp" jdbcType="VARCHAR" property="createEmp"/>
+        <result column="create_emp_id" jdbcType="VARCHAR" property="createEmpId"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="modify_emp" jdbcType="VARCHAR" property="modifyEmp"/>
+        <result column="modify_emp_id" jdbcType="VARCHAR" property="modifyEmpId"/>
+        <result column="audit_time" jdbcType="TIMESTAMP" property="auditTime"/>
+        <result column="audit_emp" jdbcType="VARCHAR" property="auditEmp"/>
+        <result column="audit_emp_id" jdbcType="VARCHAR" property="auditEmpId"/>
+        <collection property="purchaseApplyParts" javaType="ArrayList" column="id"
+                    ofType="cn.czcxy.xj.crmclient.purchase.purchaseApply.entity.PurchaseApplyPart"
+                    select="cn.czcxy.xj.crmclient.purchase.purchaseApply.mapper.PurchaseApplyPartMapper.findPartById"
+                    fetchType="eager">
+            <id column="id" property="id" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <select id="findPurchaseApplyById" resultMap="BaseResultMap">
+       SELECT  * from crm_purchase_apply WHERE id=#{id}
+    </select>
+
+    <update id="updatePurchaseApplyStatusById">
+        UPDATE crm_purchase_apply SET status = #{status} WHERE  id = #{id}
+    </update>
+</mapper>

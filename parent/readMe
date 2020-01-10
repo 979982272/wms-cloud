@@ -1,0 +1,13 @@
+1.code项目中的tk.mybatis文件为私有仓库中的文件
+2.多台服务器注册到eureka的时候 需要修改当前服务器的host为公网ip，并且在启动参数结尾加上--spring.cloud.inetutils.ignoredInterfaces=.*
+3.maven 配置私服账号
+<server>
+        <id>releases</id>
+        <username>deployment</username>
+        <password>tudou123</password><!--这个密码就是你设置的密码-->
+    </server>
+    <server>
+        <id>snapshots</id>
+        <username>deployment</username>
+        <password>tudou123</password><!--这个密码就是你设置的密码-->
+    </server>

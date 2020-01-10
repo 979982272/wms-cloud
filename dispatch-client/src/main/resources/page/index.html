@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>${title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <#include "/common/head.html"/>
+    <link type="text/css" href="/static/base/css/login.css" rel="stylesheet">
+    <!--<script src="/static/base/frame/Jquery/jquery.form.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js" integrity="sha384-FzT3vTVGXqf7wRfy8k4BiyzvbNfeYjK+frTVqZeNDFl8woCbF0CYG6g2fMEFFo/i" crossorigin="anonymous"></script>
+<body>
+<div class="middle">
+    <div class="logo">
+        <span class="navbar-brand" style="margin-left: 0px; width: 260px;">
+        </span>
+    </div>
+    <div class="loginFrm">
+        <div class="tab">
+            <ul>
+                <li id="tab_login" class="on">登录</li>
+                <li id="tab_regis">注册</li>
+            </ul>
+        </div>
+        <div class="tabList">
+            <div id="content_login" class="tabContent block">
+                <form class="form-signin form-inline" id="loginForm" method="post" action="/login">
+                    <div class="form-group" style="padding: 15px">
+                        <div class="input-group">
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-user"></span></div>
+                            <input type="text" class="form-control" id="userName" name="username" placeholder="UserName"
+                                   style="width: 250px" value="0000">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group" style="padding: 15px">
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></div>
+                            <input type="password" class="form-control" id="password" name="password"
+                                   placeholder="Password"
+                                   style="width: 250px" value="123456">
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 15px">
+                        <input type="button" class="login-btn"
+                               id="submitForm" onclick="login()"
+                               value="登录">
+                    </div>
+                    <input hidden name="submit" value="Login">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="navbar-fixed-bottom">
+    <div style="margin-bottom: 20px;text-align: center">
+        <span style="color: #eee;font-size: 14px;">版权所有 ©&nbsp;王伟华(演示平台)</span>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    // 在这里设置成表单提交，登陆成功直接跳转 登陆失败返回异步失败结果
+    function login() {
+        var userName = $("#userName").val();
+        var password = $("#password").val();
+        if (isEmpty(userName)) {
+            $.core.showErrogMsg("用户名不能为空！");
+            return;
+        }
+        if (isEmpty(password)) {
+            $.core.showErrogMsg("密码不能为空！");
+            return;
+        }
+        $.core.showLoading();
+        $("#loginForm").ajaxSubmit({
+            success: function (res) {
+                $.core.hideLoading();
+                if (res.status == undefined || res.status == false) {
+                    $.core.showErrogMsg(res.msg);
+                } else {
+                    var other = res.other;
+
+                    window.location.href = "${ctx}/system?token=" + other.token + "&userName=" + other.userName;
+                }
+            }, error: function (res) {
+                $.core.hideLoading();
+                $.core.showErrogMsg(res)
+            }
+        })
+    }
+</script>
+</html>

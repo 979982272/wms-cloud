@@ -1,0 +1,18 @@
+server:
+  port: 8085
+zuul:
+  routes:
+    testClient:
+      path: /crm/**
+      serviceId: crm-client
+    basicClient:
+      path: /basic/**
+      serviceId: basic-client
+logging:
+  file: "logs/zull.log"
+  level:
+    org:
+      springframework:
+        web:
+          DEBUG
+spring.profiles.include: zipkinAddress,serverAddress

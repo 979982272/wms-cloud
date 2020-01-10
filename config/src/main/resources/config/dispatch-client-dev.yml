@@ -1,0 +1,31 @@
+server:
+  port: 8083
+  context-path: /
+logging:
+  file: "logs/dispatch-client.log"
+  level:
+    org:
+      springframework:
+        web:
+          DEBUG
+spring:
+  freemarker:
+      ##设置freemarker的路径
+      template-loader-path: classpath:/page
+      ##设置文件的后缀
+      suffix: .html
+      content-type: text/html;charset=UTF-8
+      request-context-attribute: request
+      ##使freemaker没有值的时候不报错
+      settings:
+        template_exception_handler: ignore
+  ##设置静态文件路径
+  mvc:
+    static-path-pattern: /static/**
+  resources:
+    cache-period: 604800
+    chain:
+        gzipped: true
+        cache: false
+spring.profiles.include: zipkinAddress,serverAddress,datasource,redis
+

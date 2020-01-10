@@ -1,0 +1,12 @@
+server:
+  port: 8082
+logging:
+  file: "logs/crm-client.log"
+  level:
+    org:
+      springframework:
+        web:
+          DEBUG
+spring.profiles.include: zipkinAddress,serverAddress,datasource,redis
+
+

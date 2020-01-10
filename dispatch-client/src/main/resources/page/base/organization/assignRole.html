@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <#include "/common/head.html"/>
+</head>
+<body style="overflow: hidden">
+<div id="gridLayout" style="height: 100%;width:100%;border: none;">
+    <div id="roleGrid" style="height: 100%"></div>
+    <div id="indexGrid" style="height: 100%"></div>
+</div>
+</body>
+<script>
+    var gridName = "indexGrid";
+    var rolesGirdName = "roleGrid";
+    $(function () {
+        $("#gridLayout").kendoSplitter({
+            animation: false,
+            orientation: "vertical",
+            panes: [
+                {collapsible: true, resizable: true, scrollable: true},
+                {collapsible: false, resizable: true, scrollable: true}
+            ]
+        });
+        setGrid();
+        setGoodsGrid();
+        setGridDataSource();
+        setGoodsGridDataSource();
+    });
+
+    // 设置产品档案数据源
+    function setGoodsGridDataSource() {
+        var data = getGridDataSourceByNOPagin("/base/organization/selectRole?id=${id}")
+        console.log(data)
+        var grid = $("#" + rolesGirdName).data("kendoGrid");
+        grid.setDataSource(data);
+    }
+
+    // 初始化产品档案表格
+    function setGoodsGrid() {
+        $("#" + rolesGirdName).kendoGrid({
+                toolbar: [
+                    {
+                        template: "<button id=\"opAssignRole\" name=\"opAssignRole\" class = \"k-button \" type=\"button\" data-role=\"button\" role=\"button\" aria-disabled=\"false\"  onclick=\"opAssignRole();\"><span class=\"fa fa fa-cloud fa-fw\"><\/span>分配角色<\/button>",
+                        name: "opAssignRole",
+                        text: "分配角色"
+                    }, {
+                        template: "<button id=\"opBackIndex\" name=\"opBackIndex\" class = \"k-button \" type=\"button\" data-role=\"button\" role=\"button\" aria-disabled=\"false\"  onclick=\"backIndex();\"><span class=\"fa fa-mail-reply\"><\/span>返回<\/button>",
+                        name: "opBackIndex",
+                        text: "返回"
+                    }
+                ],
+                sortable: {mode: "multiple", allowUnsort: true},
+                allowCopy: true,
+                filterable: {
+                    mode: "row,menu"
+                },
+                resizable: true,
+                editable: false,
+                reorderable: true,
+                scrollable: {virtual: false},
+                columns: [
+                    {
+                        field: "indexCkAll",
+                        sortable: false,
+                        filterable: false,
+                        width: "35px",
+                        headerTemplate: '<input type="checkbox" class="k-checkbox" id="oproleCheck"/><label for="oproleCheck" class="k-checkbox-label" onclick="javascript:if($(\'#oproleCheck\').is(\':checked\')){$(\'input[name=oproleCheck]\').prop(\'checked\',false);} else {$(\'input[name=oproleCheck]\').prop(\'checked\',true)}"></label>',
+                        template: function (e) {
+                            return '<input type="checkbox" name="oproleCheck" class="k-checkbox" data-type="ck" id="ck' + e.uid + '"/><label for="ck' + e.uid + '" class="k-checkbox-label" ></label>';
+                        }
+                    },
+                    {
+                        field: "roleName",
+                        width: "60%",
+                        title: "角色名称"
+                    }
+                    ,
+                    {
+                        field: "remaker",
+                        width: "60%",
+                        title: "备注"
+                        , attributes: {
+                            style: "white-space: nowrap",
+                            tipflag: "hasTooltip",
+                            datafield: "remaker"
+                        }
+                    }
+
+                ],
+                filterable: {
+                    mode: "row,menu",
+                    messages: messages,
+                    operators: {
+                        string: operators
+                    }
+                    ,
+                    extra: true
+                }, dataBound: function (e) {
+                    gridOnDataBound();
+                }
+            }
+        )
+        ;
+        $("#" + gridName).kendoTooltip({
+            filter: "td[tipflag='hasTooltip']", position: "top", content: function (e) {
+                var field = $(e.target).attr("datafield");
+                var dataItem = $("#" + gridName).data("kendoGrid").dataItem(e.target.closest("tr"));
+                return dataItem[field];
+            }
+        }).data("kendoTooltip");
+    }
+
+    // 初始化表格
+    function setGrid() {
+        $("#" + gridName).kendoGrid({
+                toolbar: [
+                    {
+                        template: "<button id=\"opDeleteBatchIndex\" name=\"opDeleteBatchIndex\" class = \"k-button \" type=\"button\" data-role=\"button\" role=\"button\" aria-disabled=\"false\"  onclick=\"deleteBatchIndex();\"><span class=\"fa fa-remove fa-fw\"><\/span>删除<\/button>",
+                        name: "opDeleteBatchIndex",
+                        text: "删除"
+                    }
+                ],
+                sortable: {mode: "multiple", allowUnsort: true},
+                allowCopy: true,
+                filterable: {
+                    mode: "row,menu"
+                },
+                resizable: true,
+                editable: false,
+                reorderable: true,
+                scrollable: {virtual: false},
+                columns: [
+                    {
+                        field: "indexCkAll",
+                        sortable: false,
+                        filterable: false,
+                        width: "35px",
+                        headerTemplate: '<input type="checkbox" class="k-checkbox" id="indexCkAll"/><label for="indexCkAll" class="k-checkbox-label" onclick="javascript:if($(\'#indexCkAll\').is(\':checked\')){$(\'input[name=opindexCheck]\').prop(\'checked\',false);} else {$(\'input[name=opindexCheck]\').prop(\'checked\',true)}"></label>',
+                        template: function (e) {
+                            return '<input type="checkbox" name="opindexCheck" class="k-checkbox" data-type="ck" id="ck' + e.uid + '"/><label for="ck' + e.uid + '" class="k-checkbox-label" ></label>';
+                        }
+                    },
+                    {
+                        field: "roleName",
+                        width: "60%",
+                        title: "角色名称"
+                    }
+                    ,
+                    {
+                        field: "remaker",
+                        width: "60%",
+                        title: "备注"
+                        , attributes: {
+                            style: "white-space: nowrap",
+                            tipflag: "hasTooltip",
+                            datafield: "remaker"
+                        }
+                    }
+
+                ],
+                filterable: {
+                    mode: "row,menu",
+                    messages: messages,
+                    operators: {
+                        string: operators
+                    }
+                    ,
+                    extra: true
+                }, dataBound: function (e) {
+                    gridOnDataBound();
+                }
+            }
+        )
+        ;
+        $("#" + gridName).kendoTooltip({
+            filter: "td[tipflag='hasTooltip']", position: "top", content: function (e) {
+                var field = $(e.target).attr("datafield");
+                var dataItem = $("#" + gridName).data("kendoGrid").dataItem(e.target.closest("tr"));
+                return dataItem[field];
+            }
+        }).data("kendoTooltip");
+    }
+
+    // 设置数据源
+    function setGridDataSource() {
+        var data = getGridDataSourceByNOPagin("/base/organization/selectOrganizationRole?id=${id}")
+        var grid = $("#" + gridName).data("kendoGrid");
+        grid.setDataSource(data);
+    }
+
+    // 返回
+    function backIndex() {
+        window.location.href = $.core.addToken("${ctx}/base/organization")
+    }
+
+    // 分配
+    function opAssignRole() {
+        var grid = $("#" + rolesGirdName).data("kendoGrid");
+        var rows = grid.getChecked();
+        if (rows && rows.length > 0) {
+            var ids = [];
+            for (var i = 0; i < rows.length; i++) {
+                ids.push(rows[i].id);
+            }
+            $.core.showLoading();
+            ids = ids.join(",");
+            $.core.ajax({
+                url: "/base/organization/saveOrganizationRole",
+                type: "post",
+                data: {
+                    roleIds: ids,
+                    organizationId: "${id}"
+                },
+                dataType: "json",
+                success: function (res) {
+                    $.core.hideLoading();
+                    if (res.status) {
+                        $.core.refresh(rolesGirdName);
+                        $.core.refresh(gridName);
+                        $.core.showMsg(res.msg);
+                    } else {
+                        $.core.showErrogMsg(res.msg);
+                    }
+                }, error: function (res) {
+                    $.core.hideLoading();
+                    $.core.showErrogMsg("网络错误!\n\r status:" + res.status + ";statusText:" + res.statusText)
+                }
+            });
+        } else {
+            $.core.showErrogMsg("请选择需要操作的数据!");
+        }
+    }
+
+    // 批量删除
+    function deleteBatchIndex() {
+        batchActionByIds({
+            url: '${ctx}/base/organization/${id}/deleteOrganizationRole',
+            gridName: gridName,
+            callback: function () {
+                $.core.refresh(rolesGirdName);
+                $.core.refresh(gridName);
+            }
+        });
+    }
+
+</script>

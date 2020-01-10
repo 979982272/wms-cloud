@@ -1,0 +1,13 @@
+server:
+  port: 9097
+logging:
+  file: "logs/zipkin.log"
+  level:
+    org:
+      springframework:
+        web:
+          DEBUG
+spring.profiles.include: serverAddress
+
+
+
